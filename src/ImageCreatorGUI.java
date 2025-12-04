@@ -1,6 +1,8 @@
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.awt.datatransfer.*;
+import java.awt.dnd.*;
 import java.io.File;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -24,6 +26,9 @@ public class ImageCreatorGUI extends JFrame {
     private JLabel lblSelectedFiles;
     private JLabel lblStatus;
     private JProgressBar progressBar;
+    private JPanel dropZonePanel;
+    private JList<String> fileList;
+    private DefaultListModel<String> fileListModel;
 
     private List<File> selectedFiles = new ArrayList<>();
     private File outputDirectory = null;
@@ -38,6 +43,8 @@ public class ImageCreatorGUI extends JFrame {
         }
 
         initComponents();
+        setupDragAndDrop();
+        setupClipboardPaste();
         redirectSystemOut();
     }
 
@@ -57,6 +64,9 @@ public class ImageCreatorGUI extends JFrame {
         // Панель налаштувань
         JPanel settingsPanel = createSettingsPanel();
 
+        // Панель Drag & Drop
+        JPanel dropPanel = createDropZonePanel();
+
         // Панель кнопок
         JPanel buttonPanel = createButtonPanel();
 
@@ -66,15 +76,21 @@ public class ImageCreatorGUI extends JFrame {
         // Лог панель
         createLogPanel();
 
+        // Ліва панель
+        JPanel leftPanel = new JPanel(new BorderLayout(10, 10));
+        leftPanel.setBackground(new Color(240, 242, 245));
+        leftPanel.add(settingsPanel, BorderLayout.NORTH);
+        leftPanel.add(dropPanel, BorderLayout.CENTER);
+        leftPanel.add(buttonPanel, BorderLayout.SOUTH);
+
         // Компонування
-        mainPanel.add(settingsPanel, BorderLayout.NORTH);
-        mainPanel.add(buttonPanel, BorderLayout.CENTER);
+        mainPanel.add(leftPanel, BorderLayout.CENTER);
         mainPanel.add(statusPanel, BorderLayout.SOUTH);
 
         add(mainPanel, BorderLayout.WEST);
         add(scrollPane, BorderLayout.CENTER);
 
-        setSize(1100, 650);
+        setSize(1200, 700);
         setLocationRelativeTo(null);
         setResizable(true);
     }
@@ -164,6 +180,62 @@ public class ImageCreatorGUI extends JFrame {
         return infoPanel;
     }
 
+    private JPanel createDropZonePanel() {
+        JPanel dropPanel = new JPanel(new BorderLayout(10, 10));
+        dropPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder(
+                        BorderFactory.createLineBorder(new Color(52, 168, 83), 2),
+                        "Drop Zone / File List",
+                        javax.swing.border.TitledBorder.LEFT,
+                        javax.swing.border.TitledBorder.TOP,
+                        new Font("Segoe UI", Font.BOLD, 14),
+                        new Color(52, 168, 83)
+                ),
+                BorderFactory.createEmptyBorder(10, 10, 10, 10)
+        ));
+        dropPanel.setBackground(Color.WHITE);
+
+        // Drop zone area
+        dropZonePanel = new JPanel(new BorderLayout());
+        dropZonePanel.setBackground(new Color(245, 255, 245));
+        dropZonePanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(52, 168, 83), 2, true),
+                BorderFactory.createEmptyBorder(20, 20, 20, 20)
+        ));
+        dropZonePanel.setPreferredSize(new Dimension(350, 120));
+
+        JLabel dropLabel = new JLabel("<html><center>" +
+                "<b style='font-size: 14px;'>Drop Images Here</b><br><br>" +
+                "<span style='color: gray;'>or use Ctrl+V to paste<br>" +
+                "Supported: JPG, PNG, GIF, BMP</span>" +
+                "</center></html>", SwingConstants.CENTER);
+        dropLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        dropZonePanel.add(dropLabel, BorderLayout.CENTER);
+
+        // File list
+        fileListModel = new DefaultListModel<>();
+        fileList = new JList<>(fileListModel);
+        fileList.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+        fileList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        JScrollPane fileScrollPane = new JScrollPane(fileList);
+        fileScrollPane.setPreferredSize(new Dimension(350, 150));
+
+        // Clear selection button
+        JButton btnClearSelection = new JButton("Clear Selection");
+        btnClearSelection.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+        btnClearSelection.addActionListener(e -> clearSelectedFiles());
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        buttonPanel.setBackground(Color.WHITE);
+        buttonPanel.add(btnClearSelection);
+
+        dropPanel.add(dropZonePanel, BorderLayout.NORTH);
+        dropPanel.add(fileScrollPane, BorderLayout.CENTER);
+        dropPanel.add(buttonPanel, BorderLayout.SOUTH);
+
+        return dropPanel;
+    }
+
     private JPanel createButtonPanel() {
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 15));
@@ -242,12 +314,11 @@ public class ImageCreatorGUI extends JFrame {
 
     private JButton createStyledButton(String text, Color color) {
         JButton button = new JButton(text);
-        button.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        button.setFont(new Font("Segoe UI", Font.BOLD, 12));
         button.setBackground(color);
         button.setForeground(Color.WHITE);
         button.setFocusPainted(false);
         button.setBorderPainted(false);
-        button.setPreferredSize(new Dimension(180, 40));
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         button.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -276,6 +347,114 @@ public class ImageCreatorGUI extends JFrame {
         ));
     }
 
+    private void setupDragAndDrop() {
+        new DropTarget(dropZonePanel, new DropTargetListener() {
+            @Override
+            public void dragEnter(DropTargetDragEvent dtde) {
+                dropZonePanel.setBackground(new Color(230, 255, 230));
+                dropZonePanel.setBorder(BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(new Color(52, 168, 83), 3, true),
+                        BorderFactory.createEmptyBorder(20, 20, 20, 20)
+                ));
+            }
+
+            @Override
+            public void dragOver(DropTargetDragEvent dtde) {
+                // Можна додати додаткову логіку
+            }
+
+            @Override
+            public void dropActionChanged(DropTargetDragEvent dtde) {
+                // Можна додати додаткову логіку
+            }
+
+            @Override
+            public void dragExit(DropTargetEvent dte) {
+                dropZonePanel.setBackground(new Color(245, 255, 245));
+                dropZonePanel.setBorder(BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(new Color(52, 168, 83), 2, true),
+                        BorderFactory.createEmptyBorder(20, 20, 20, 20)
+                ));
+            }
+
+            @Override
+            public void drop(DropTargetDropEvent dtde) {
+                try {
+                    dtde.acceptDrop(DnDConstants.ACTION_COPY);
+                    Transferable transferable = dtde.getTransferable();
+
+                    if (transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+                        @SuppressWarnings("unchecked")
+                        List<File> droppedFiles = (List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
+                        addFiles(droppedFiles);
+                        dtde.dropComplete(true);
+                    } else {
+                        dtde.dropComplete(false);
+                    }
+                } catch (Exception e) {
+                    txtLog.append("ERROR: Could not process dropped files: " + e.getMessage() + "\n");
+                    dtde.dropComplete(false);
+                }
+
+                dragExit(null);
+            }
+        });
+    }
+
+    private void setupClipboardPaste() {
+        // Налаштування Ctrl+V для всього вікна
+        KeyStroke pasteKeyStroke = KeyStroke.getKeyStroke("control V");
+        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(pasteKeyStroke, "paste");
+        getRootPane().getActionMap().put("paste", new AbstractAction() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                pasteFilesFromClipboard();
+            }
+        });
+    }
+
+    private void pasteFilesFromClipboard() {
+        try {
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            Transferable contents = clipboard.getContents(null);
+
+            if (contents != null && contents.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+                @SuppressWarnings("unchecked")
+                List<File> files = (List<File>) contents.getTransferData(DataFlavor.javaFileListFlavor);
+                addFiles(files);
+            } else {
+                txtLog.append("Clipboard does not contain files\n");
+            }
+        } catch (Exception e) {
+            txtLog.append("ERROR: Could not paste from clipboard: " + e.getMessage() + "\n");
+        }
+    }
+
+    private void addFiles(List<File> files) {
+        int addedCount = 0;
+        for (File file : files) {
+            if (isImageFile(file) && !selectedFiles.contains(file)) {
+                selectedFiles.add(file);
+                fileListModel.addElement(file.getName());
+                addedCount++;
+            }
+        }
+
+        if (addedCount > 0) {
+            lblSelectedFiles.setText(String.valueOf(selectedFiles.size()));
+            updateProcessButtonState();
+            txtLog.append("Added " + addedCount + " file(s)\n");
+        }
+    }
+
+    private void clearSelectedFiles() {
+        selectedFiles.clear();
+        fileListModel.clear();
+        lblSelectedFiles.setText("0");
+        updateProcessButtonState();
+        txtLog.append("Selection cleared\n");
+    }
+
     private void selectFiles() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setMultiSelectionEnabled(true);
@@ -296,22 +475,17 @@ public class ImageCreatorGUI extends JFrame {
 
         if (result == JFileChooser.APPROVE_OPTION) {
             File[] files = fileChooser.getSelectedFiles();
-            selectedFiles.clear();
+            List<File> newFiles = new ArrayList<>();
 
             for (File file : files) {
                 if (isImageFile(file)) {
-                    selectedFiles.add(file);
+                    newFiles.add(file);
                 }
             }
 
-            lblSelectedFiles.setText(String.valueOf(selectedFiles.size()));
-            updateProcessButtonState();
+            addFiles(newFiles);
 
-            txtLog.append("Files selected: " + selectedFiles.size() + "\n");
-            for (File file : selectedFiles) {
-                txtLog.append("   - " + file.getName() + "\n");
-            }
-            txtLog.append("\n");
+            txtLog.append("Files selected via dialog: " + newFiles.size() + "\n");
         }
     }
 
