@@ -49,7 +49,7 @@ public class ImageCreatorGUI extends JFrame {
     }
 
     private void initComponents() {
-        setTitle("🎨 ImageCreator - Багатопотоковий творець мініатюр");
+        setTitle(" ImageCreator - Багатопотоковий творець мініатюр");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLayout(new BorderLayout(15, 15));
 
@@ -101,7 +101,7 @@ public class ImageCreatorGUI extends JFrame {
         settingsPanel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createTitledBorder(
                         BorderFactory.createLineBorder(new Color(66, 133, 244), 2),
-                        "⚙️ Налаштування",
+                        " Налаштування",
                         javax.swing.border.TitledBorder.LEFT,
                         javax.swing.border.TitledBorder.TOP,
                         new Font("Segoe UI", Font.BOLD, 14),
@@ -117,28 +117,28 @@ public class ImageCreatorGUI extends JFrame {
 
         // Розмір зображення
         gbc.gridx = 0; gbc.gridy = 0;
-        settingsPanel.add(createStyledLabel("📏 Ширина (px):"), gbc);
+        settingsPanel.add(createStyledLabel(" Ширина (px):"), gbc);
         gbc.gridx = 1;
         spinnerWidth = new JSpinner(new SpinnerNumberModel(200, 50, 2000, 10));
         styleSpinner(spinnerWidth);
         settingsPanel.add(spinnerWidth, gbc);
 
         gbc.gridx = 0; gbc.gridy = 1;
-        settingsPanel.add(createStyledLabel("📐 Висота (px):"), gbc);
+        settingsPanel.add(createStyledLabel(" Висота (px):"), gbc);
         gbc.gridx = 1;
         spinnerHeight = new JSpinner(new SpinnerNumberModel(200, 50, 2000, 10));
         styleSpinner(spinnerHeight);
         settingsPanel.add(spinnerHeight, gbc);
 
         gbc.gridx = 0; gbc.gridy = 2;
-        settingsPanel.add(createStyledLabel("🧵 Кількість потоків:"), gbc);
+        settingsPanel.add(createStyledLabel(" Кількість потоків:"), gbc);
         gbc.gridx = 1;
         spinnerThreads = new JSpinner(new SpinnerNumberModel(4, 1, 16, 1));
         styleSpinner(spinnerThreads);
         settingsPanel.add(spinnerThreads, gbc);
 
         gbc.gridx = 0; gbc.gridy = 3;
-        settingsPanel.add(createStyledLabel("🏷️ Префікс файлів:"), gbc);
+        settingsPanel.add(createStyledLabel("🏷 Префікс файлів:"), gbc);
         gbc.gridx = 1;
         txtPrefix = new JTextField("thumbnail", 15);
         styleTextField(txtPrefix);
@@ -159,7 +159,7 @@ public class ImageCreatorGUI extends JFrame {
 
         JPanel filesPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         filesPanel.setBackground(Color.WHITE);
-        filesPanel.add(createStyledLabel("📁 Обрано файлів:"));
+        filesPanel.add(createStyledLabel(" Обрано файлів:"));
         lblSelectedFiles = new JLabel("0");
         lblSelectedFiles.setFont(new Font("Segoe UI", Font.BOLD, 14));
         lblSelectedFiles.setForeground(new Color(52, 168, 83));
@@ -167,7 +167,7 @@ public class ImageCreatorGUI extends JFrame {
 
         JPanel outputPanel = new JPanel(new BorderLayout(5, 0));
         outputPanel.setBackground(Color.WHITE);
-        outputPanel.add(createStyledLabel("💾 Зберегти в:"), BorderLayout.WEST);
+        outputPanel.add(createStyledLabel(" Зберегти в:"), BorderLayout.WEST);
         txtOutputPath = new JTextField("Не обрано");
         txtOutputPath.setEditable(false);
         styleTextField(txtOutputPath);
@@ -241,20 +241,20 @@ public class ImageCreatorGUI extends JFrame {
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 15));
         buttonPanel.setBackground(new Color(240, 242, 245));
 
-        btnSelectFiles = createStyledButton("📂 Обрати зображення", new Color(66, 133, 244));
+        btnSelectFiles = createStyledButton(" Обрати зображення", new Color(66, 133, 244));
         btnSelectFiles.addActionListener(e -> selectFiles());
         buttonPanel.add(btnSelectFiles);
 
-        btnSelectOutput = createStyledButton("📁 Обрати папку", new Color(251, 188, 5));
+        btnSelectOutput = createStyledButton(" Обрати папку", new Color(251, 188, 5));
         btnSelectOutput.addActionListener(e -> selectOutputDirectory());
         buttonPanel.add(btnSelectOutput);
 
-        btnProcess = createStyledButton("🚀 Обробити", new Color(52, 168, 83));
+        btnProcess = createStyledButton(" Обробити", new Color(52, 168, 83));
         btnProcess.setEnabled(false);
         btnProcess.addActionListener(e -> processImages());
         buttonPanel.add(btnProcess);
 
-        btnClear = createStyledButton("🗑️ Очистити", new Color(234, 67, 53));
+        btnClear = createStyledButton("🗑 Очистити", new Color(234, 67, 53));
         btnClear.addActionListener(e -> clearLog());
         buttonPanel.add(btnClear);
 
@@ -296,7 +296,7 @@ public class ImageCreatorGUI extends JFrame {
         scrollPane.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createTitledBorder(
                         BorderFactory.createLineBorder(new Color(100, 100, 100), 1),
-                        "📋 Лог обробки",
+                        " Лог обробки",
                         javax.swing.border.TitledBorder.LEFT,
                         javax.swing.border.TitledBorder.TOP,
                         new Font("Segoe UI", Font.BOLD, 13),
