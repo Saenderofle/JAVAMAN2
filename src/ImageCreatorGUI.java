@@ -254,7 +254,7 @@ public class ImageCreatorGUI extends JFrame {
         btnProcess.addActionListener(e -> processImages());
         buttonPanel.add(btnProcess);
 
-        btnClear = createStyledButton("🗑 Очистити", new Color(234, 67, 53));
+        btnClear = createStyledButton(" Очистити лог", new Color(234, 67, 53));
         btnClear.addActionListener(e -> clearLog());
         buttonPanel.add(btnClear);
 
