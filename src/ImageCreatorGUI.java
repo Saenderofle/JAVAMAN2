@@ -307,9 +307,9 @@ public class ImageCreatorGUI extends JFrame {
             lblSelectedFiles.setText(String.valueOf(selectedFiles.size()));
             updateProcessButtonState();
 
-            txtLog.append("📂 Обрано файлів: " + selectedFiles.size() + "\n");
+            txtLog.append("Files selected: " + selectedFiles.size() + "\n");
             for (File file : selectedFiles) {
-                txtLog.append("   • " + file.getName() + "\n");
+                txtLog.append("   - " + file.getName() + "\n");
             }
             txtLog.append("\n");
         }
@@ -334,7 +334,7 @@ public class ImageCreatorGUI extends JFrame {
             txtOutputPath.setToolTipText(outputDirectory.getAbsolutePath());
             updateProcessButtonState();
 
-            txtLog.append("💾 Обрано папку для збереження:\n");
+            txtLog.append("Output folder selected:\n");
             txtLog.append("   " + outputDirectory.getAbsolutePath() + "\n\n");
         }
     }
@@ -345,13 +345,13 @@ public class ImageCreatorGUI extends JFrame {
 
     private void processImages() {
         if (selectedFiles.isEmpty()) {
-            showStyledMessage("⚠️ Спочатку оберіть зображення!", "Попередження",
+            showStyledMessage("Please select images first!", "Warning",
                     JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         if (outputDirectory == null) {
-            showStyledMessage("⚠️ Спочатку оберіть папку для збереження!", "Попередження",
+            showStyledMessage("Please select output folder first!", "Warning",
                     JOptionPane.WARNING_MESSAGE);
             return;
         }
@@ -361,7 +361,7 @@ public class ImageCreatorGUI extends JFrame {
         btnSelectOutput.setEnabled(false);
         progressBar.setValue(0);
         progressBar.setString("0%");
-        lblStatus.setText("⚙️ Обробка...");
+        lblStatus.setText("Processing...");
         lblStatus.setForeground(new Color(251, 188, 5));
 
         int width = (Integer) spinnerWidth.getValue();
@@ -395,47 +395,47 @@ public class ImageCreatorGUI extends JFrame {
                 double duration = (endTime - startTime) / 1000.0;
 
                 final String message = "\n" + "=".repeat(50) + "\n" +
-                        "🎉 Обробку завершено успішно!\n" +
-                        "⏱️  Час виконання: " + String.format("%.2f", duration) + " сек\n" +
-                        "✅ Оброблено: " + creator.getProcessedCount() + " файлів\n" +
-                        "📁 Збережено в: " + outputDirectory.getName() + "\n" +
+                        "Processing completed successfully!\n" +
+                        "Execution time: " + String.format("%.2f", duration) + " sec\n" +
+                        "Processed: " + creator.getProcessedCount() + " files\n" +
+                        "Saved to: " + outputDirectory.getName() + "\n" +
                         "=".repeat(50) + "\n\n";
 
                 SwingUtilities.invokeLater(() -> {
                     txtLog.append(message);
                     progressBar.setValue(100);
-                    progressBar.setString("100% ✓");
+                    progressBar.setString("100%");
                     progressBar.setForeground(new Color(52, 168, 83));
-                    lblStatus.setText("✅ Завершено успішно!");
+                    lblStatus.setText("Completed successfully!");
                     lblStatus.setForeground(new Color(52, 168, 83));
                     btnProcess.setEnabled(true);
                     btnSelectFiles.setEnabled(true);
                     btnSelectOutput.setEnabled(true);
 
                     showStyledMessage(
-                            "🎉 Обробку завершено!\n\n" +
-                                    "✅ Оброблено файлів: " + creator.getProcessedCount() + "\n" +
-                                    "⏱️ Час виконання: " + String.format("%.2f", duration) + " сек\n" +
-                                    "📁 Збережено в: " + outputDirectory.getAbsolutePath(),
-                            "Успіх",
+                            "Processing completed!\n\n" +
+                                    "Files processed: " + creator.getProcessedCount() + "\n" +
+                                    "Execution time: " + String.format("%.2f", duration) + " sec\n" +
+                                    "Saved to: " + outputDirectory.getAbsolutePath(),
+                            "Success",
                             JOptionPane.INFORMATION_MESSAGE
                     );
                 });
 
             } catch (Exception e) {
                 SwingUtilities.invokeLater(() -> {
-                    txtLog.append("\n❌ КРИТИЧНА ПОМИЛКА: " + e.getMessage() + "\n\n");
-                    progressBar.setString("Помилка!");
+                    txtLog.append("\nCRITICAL ERROR: " + e.getMessage() + "\n\n");
+                    progressBar.setString("Error!");
                     progressBar.setForeground(new Color(234, 67, 53));
-                    lblStatus.setText("❌ Помилка обробки");
+                    lblStatus.setText("Processing error");
                     lblStatus.setForeground(new Color(234, 67, 53));
                     btnProcess.setEnabled(true);
                     btnSelectFiles.setEnabled(true);
                     btnSelectOutput.setEnabled(true);
 
                     showStyledMessage(
-                            "❌ Помилка обробки:\n\n" + e.getMessage(),
-                            "Помилка",
+                            "Processing error:\n\n" + e.getMessage(),
+                            "Error",
                             JOptionPane.ERROR_MESSAGE
                     );
                 });
@@ -448,7 +448,7 @@ public class ImageCreatorGUI extends JFrame {
         progressBar.setValue(0);
         progressBar.setString("0%");
         progressBar.setForeground(new Color(66, 133, 244));
-        lblStatus.setText("⏸️ Готово до роботи");
+        lblStatus.setText("Ready");
         lblStatus.setForeground(new Color(100, 100, 100));
     }
 
@@ -494,7 +494,7 @@ public class ImageCreatorGUI extends JFrame {
             System.setOut(printStream);
             System.setErr(printStream);
         } catch (Exception e) {
-            System.err.println("Не вдалося налаштувати перенаправлення виводу: " + e.getMessage());
+            System.err.println("Could not configure output redirection: " + e.getMessage());
         }
     }
 }

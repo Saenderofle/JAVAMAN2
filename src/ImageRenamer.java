@@ -20,7 +20,7 @@ public class ImageRenamer implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("🚀 Потік перейменування запущено [" + Thread.currentThread().getName() + "]");
+        System.out.println("Rename thread started [" + Thread.currentThread().getName() + "]");
 
         while (running || !renameQueue.isEmpty()) {
             try {
@@ -33,10 +33,10 @@ public class ImageRenamer implements Runnable {
                     File renamedFile = new File(tempFile.getParent(), newFileName);
 
                     if (tempFile.renameTo(renamedFile)) {
-                        System.out.println("📝 Перейменовано: " + tempFile.getName() +
-                                " → " + renamedFile.getName());
+                        System.out.println("Renamed: " + tempFile.getName() +
+                                " -> " + renamedFile.getName());
                     } else {
-                        System.err.println("⚠️ Не вдалося перейменувати: " + tempFile.getName());
+                        System.err.println("WARNING: Failed to rename: " + tempFile.getName());
                     }
                 }
             } catch (InterruptedException e) {
@@ -45,7 +45,7 @@ public class ImageRenamer implements Runnable {
             }
         }
 
-        System.out.println("🏁 Потік перейменування завершено");
+        System.out.println("Rename thread finished");
     }
 
     public void stop() {

@@ -28,8 +28,8 @@ public class ImageCreator {
 
     public void processImages(File[] imageFiles, int targetWidth, int targetHeight,
                               String outputPrefix) {
-        System.out.println("🎬 Початок обробки " + imageFiles.length + " зображень...");
-        System.out.println("📁 Директорія збереження: " + outputDirectory.getAbsolutePath());
+        System.out.println("Starting processing of " + imageFiles.length + " images...");
+        System.out.println("Output directory: " + outputDirectory.getAbsolutePath());
 
         CompletionService<File> completionService = new ExecutorCompletionService<>(resizeExecutor);
         int submittedTasks = 0;
@@ -49,11 +49,11 @@ public class ImageCreator {
                 future.get();
                 processedCount.incrementAndGet();
             } catch (InterruptedException | ExecutionException e) {
-                System.err.println("❌ Помилка виконання задачі: " + e.getMessage());
+                System.err.println("ERROR executing task: " + e.getMessage());
             }
         }
 
-        System.out.println("⏳ Всі зображення оброблені. Очікування завершення перейменування...");
+        System.out.println("All images processed. Waiting for rename completion...");
     }
 
     public void shutdown() {
@@ -73,17 +73,17 @@ public class ImageCreator {
         try {
             renameThread.join(5000);
         } catch (InterruptedException e) {
-            System.err.println("⚠️ Помилка очікування завершення потоку перейменування");
+            System.err.println("WARNING: Error waiting for rename thread completion");
         }
 
         System.out.println("\n" + "=".repeat(40));
-        System.out.println("📊 СТАТИСТИКА");
+        System.out.println("STATISTICS");
         System.out.println("=".repeat(40));
-        System.out.println("✅ Оброблено зображень: " + processedCount.get());
-        System.out.println("📝 Перейменовано файлів: " + fileCounter.get());
-        System.out.println("📁 Збережено в: " + outputDirectory.getAbsolutePath());
+        System.out.println("Images processed: " + processedCount.get());
+        System.out.println("Files renamed: " + fileCounter.get());
+        System.out.println("Saved to: " + outputDirectory.getAbsolutePath());
         System.out.println("=".repeat(40));
-        System.out.println("🎉 Обробку завершено!");
+        System.out.println("Processing completed!");
     }
 
     private boolean isImageFile(File file) {

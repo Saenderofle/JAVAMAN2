@@ -23,8 +23,8 @@ public class ImageResizer implements Callable<File> {
     @Override
     public File call() throws Exception {
         try {
-            System.out.println("🔄 Обробка: " + task.getSourceFile().getName() +
-                    " [Потік: " + Thread.currentThread().getName() + "]");
+            System.out.println("Processing: " + task.getSourceFile().getName() +
+                    " [Thread: " + Thread.currentThread().getName() + "]");
 
             BufferedImage originalImage = ImageIO.read(task.getSourceFile());
 
@@ -53,14 +53,14 @@ public class ImageResizer implements Callable<File> {
             String format = getImageFormat(task.getSourceFile().getName());
             ImageIO.write(resizedImage, format, outputFile);
 
-            System.out.println("✅ Зміна розміру завершена: " + outputFile.getName());
+            System.out.println("Resize completed: " + outputFile.getName());
 
             // Додавання до черги перейменування
             renameQueue.put(outputFile);
 
             return outputFile;
         } catch (IOException e) {
-            System.err.println("❌ Помилка обробки " + task.getSourceFile().getName() +
+            System.err.println("ERROR processing " + task.getSourceFile().getName() +
                     ": " + e.getMessage());
             throw e;
         }

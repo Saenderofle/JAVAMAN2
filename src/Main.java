@@ -18,16 +18,16 @@ public class Main {
         // Запуск GUI в Event Dispatch Thread
         SwingUtilities.invokeLater(() -> {
             try {
-                System.out.println("🚀 Запуск ImageCreator...");
-                System.out.println("📌 Версія Java: " + System.getProperty("java.version"));
-                System.out.println("🖥️  ОС: " + System.getProperty("os.name"));
+                System.out.println("Starting ImageCreator...");
+                System.out.println("Java version: " + System.getProperty("java.version"));
+                System.out.println("OS: " + System.getProperty("os.name"));
                 System.out.println("=" .repeat(50) + "\n");
 
                 ImageCreatorGUI gui = new ImageCreatorGUI();
                 gui.setVisible(true);
 
             } catch (Exception e) {
-                System.err.println("❌ Помилка запуску програми: " + e.getMessage());
+                System.err.println("ERROR starting application: " + e.getMessage());
                 e.printStackTrace();
             }
         });
@@ -46,8 +46,8 @@ public class Main {
 
         } catch (ClassNotFoundException | InstantiationException |
                  IllegalAccessException | UnsupportedLookAndFeelException e) {
-            System.err.println("⚠️  Не вдалося встановити системний стиль: " + e.getMessage());
-            System.err.println("Використовується стандартний стиль Java");
+            System.err.println("WARNING: Could not set system look and feel: " + e.getMessage());
+            System.err.println("Using default Java style");
         }
     }
 
@@ -65,7 +65,7 @@ public class Main {
             System.setProperty("sun.jnu.encoding", "UTF-8");
 
         } catch (Exception e) {
-            System.err.println("Не вдалося встановити UTF-8 кодування: " + e.getMessage());
+            System.err.println("Could not set UTF-8 encoding: " + e.getMessage());
         }
     }
 }
