@@ -9,6 +9,9 @@ import javax.swing.UnsupportedLookAndFeelException;
 public class Main {
 
     public static void main(String[] args) {
+        // Встановлення UTF-8 кодування для консолі
+        setUTF8Encoding();
+
         // Встановлення системного вигляду для Windows
         setSystemLookAndFeel();
 
@@ -45,6 +48,24 @@ public class Main {
                  IllegalAccessException | UnsupportedLookAndFeelException e) {
             System.err.println("⚠️  Не вдалося встановити системний стиль: " + e.getMessage());
             System.err.println("Використовується стандартний стиль Java");
+        }
+    }
+
+    /**
+     * Встановлює UTF-8 кодування для правильного відображення тексту
+     */
+    private static void setUTF8Encoding() {
+        try {
+            // Встановлення UTF-8 для System.out і System.err
+            System.setOut(new java.io.PrintStream(System.out, true, "UTF-8"));
+            System.setErr(new java.io.PrintStream(System.err, true, "UTF-8"));
+
+            // Встановлення системного кодування
+            System.setProperty("file.encoding", "UTF-8");
+            System.setProperty("sun.jnu.encoding", "UTF-8");
+
+        } catch (Exception e) {
+            System.err.println("Не вдалося встановити UTF-8 кодування: " + e.getMessage());
         }
     }
 }

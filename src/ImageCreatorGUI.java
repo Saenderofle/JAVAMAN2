@@ -30,6 +30,13 @@ public class ImageCreatorGUI extends JFrame {
     private ImageCreator creator;
 
     public ImageCreatorGUI() {
+        // Встановлення UTF-8 для компонентів
+        try {
+            System.setProperty("file.encoding", "UTF-8");
+        } catch (Exception e) {
+            // Ігноруємо помилки
+        }
+
         initComponents();
         redirectSystemOut();
     }
@@ -459,14 +466,35 @@ public class ImageCreatorGUI extends JFrame {
     }
 
     private void redirectSystemOut() {
-        PrintStream printStream = new PrintStream(new java.io.OutputStream() {
-            @Override
-            public void write(int b) {
-                txtLog.append(String.valueOf((char) b));
-                txtLog.setCaretPosition(txtLog.getDocument().getLength());
-            }
-        });
-        System.setOut(printStream);
-        System.setErr(printStream);
+        try {
+            PrintStream printStream = new PrintStream(new java.io.OutputStream() {
+                private final StringBuilder buffer = new StringBuilder();
+
+                @Override
+                public void write(int b) {
+                    buffer.append((char) b);
+                    if (b == '\n') {
+                        flush();
+                    }
+                }
+
+                @Override
+                public void flush() {
+                    if (buffer.length() > 0) {
+                        final String text = buffer.toString();
+                        SwingUtilities.invokeLater(() -> {
+                            txtLog.append(text);
+                            txtLog.setCaretPosition(txtLog.getDocument().getLength());
+                        });
+                        buffer.setLength(0);
+                    }
+                }
+            }, true, "UTF-8");
+
+            System.setOut(printStream);
+            System.setErr(printStream);
+        } catch (Exception e) {
+            System.err.println("Не вдалося налаштувати перенаправлення виводу: " + e.getMessage());
+        }
     }
 }
