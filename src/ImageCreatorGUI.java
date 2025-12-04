@@ -273,6 +273,11 @@ public class ImageCreatorGUI extends JFrame {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setMultiSelectionEnabled(true);
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fileChooser.setDialogTitle("Оберіть зображення для обробки");
+
+        // Встановлення початкової директорії на робочий стіл користувача
+        String userHome = System.getProperty("user.home");
+        fileChooser.setCurrentDirectory(new File(userHome + "/Desktop"));
 
         FileNameExtensionFilter filter = new FileNameExtensionFilter(
                 "Зображення (JPG, PNG, GIF, BMP)",
@@ -306,7 +311,13 @@ public class ImageCreatorGUI extends JFrame {
     private void selectOutputDirectory() {
         JFileChooser dirChooser = new JFileChooser();
         dirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        dirChooser.setDialogTitle("Оберіть папку для збереження");
+        dirChooser.setDialogTitle("Оберіть папку для збереження результатів");
+        dirChooser.setApproveButtonText("Обрати папку");
+        dirChooser.setApproveButtonToolTipText("Зберегти оброблені зображення в цю папку");
+
+        // Встановлення початкової директорії на робочий стіл користувача
+        String userHome = System.getProperty("user.home");
+        dirChooser.setCurrentDirectory(new File(userHome + "/Desktop"));
 
         int result = dirChooser.showDialog(this, "Обрати");
 
@@ -457,11 +468,5 @@ public class ImageCreatorGUI extends JFrame {
         });
         System.setOut(printStream);
         System.setErr(printStream);
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            new ImageCreatorGUI().setVisible(true);
-        });
     }
 }
